@@ -1,0 +1,23 @@
+{
+  "pluginAlias": "GreeACImplementationPlugin",
+  "pluginType": "platform",
+  "singular": true,
+  "schema": {
+    "type": "object",
+    "properties": {
+      "name": {
+        "title": "Name",
+        "type": "string",
+        "required": true,
+        "default": "Gree ACs"
+      },
+      "broadcastAddress": {
+        "title": "Broadcast Address",
+        "type": "string",
+        "required": true,
+        "default": "192.168.50.255",
+        "description": "The broadcast address to search for the AC"
+      }
+    }
+  }
+}
