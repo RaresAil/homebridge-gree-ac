@@ -1,4 +1,4 @@
-# Gree AC Platform
+# Gree AC Platform (homebridge-gree-ac-platform)
 
 This plugin automatically detects Gree AC's and add them as accessories with the following features:
 

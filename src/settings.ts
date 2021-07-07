@@ -6,4 +6,4 @@ export const PLATFORM_NAME = 'GreeACImplementationPlugin';
 /**
  * This must match the name of your plugin as defined the package.json
  */
-export const PLUGIN_NAME = 'homebridge-gree-ac';
+export const PLUGIN_NAME = 'homebridge-gree-ac-platform';

@@ -1,7 +1,7 @@
 {
   "private": false,
   "displayName": "Gree AC Implementation Plugin",
-  "name": "homebridge-gree-ac",
+  "name": "homebridge-gree-ac-platform",
   "version": "1.0.0",
   "description": "Implements the Gree AC API",
   "license": "Apache-2.0",
