@@ -10,9 +10,9 @@ import { Platform } from './platform';
 import getStatus, { GetStatusFunc } from './status';
 import sendData, { SendDataFunc } from './sender';
 
-const speedSteps = {
-  three: 30,
-  five: 18
+const speedLevels = {
+  three: 4,
+  five: 6
 };
 
 export class PlatformAC {
@@ -87,6 +87,11 @@ export class PlatformAC {
       .getCharacteristic(
         this.platform.Characteristic.CoolingThresholdTemperature
       )
+      .setProps({
+        minValue: this.platform.config.coolingMinTemp,
+        maxValue: this.platform.config.coolingMaxTemp,
+        minStep: 1
+      })
       .onGet(this.handleThresholdTemperatureGet.bind(this))
       .onSet(this.handleThresholdTemperatureSet.bind(this));
 
@@ -94,12 +99,24 @@ export class PlatformAC {
       .getCharacteristic(
         this.platform.Characteristic.HeatingThresholdTemperature
       )
+      .setProps({
+        minValue: this.platform.config.heatingMinTemp,
+        maxValue: this.platform.config.heatingMaxTemp,
+        minStep: 1
+      })
       .onGet(this.handleThresholdTemperatureGet.bind(this))
       .onSet(this.handleThresholdTemperatureSet.bind(this));
 
     this.service
       .getCharacteristic(this.platform.Characteristic.RotationSpeed)
       .onGet(this.handleRotationSpeedGet.bind(this))
+      .setProps({
+        minStep: 1,
+        minValue: 0,
+        maxValue: this.platform.config.threeSpeedUnit
+          ? speedLevels.three
+          : speedLevels.five
+      })
       .onSet(this.handleRotationSpeedSet.bind(this));
   }
 
@@ -162,29 +179,28 @@ export class PlatformAC {
     let rotationSpeed = 0;
 
     if (this.platform.config.threeSpeedUnit) {
-      let realSpeed = 0;
-      switch (status.WdSpd) {
+      switch (parseInt(status.WdSpd.toString())) {
         case 1:
-          realSpeed = 1;
+          rotationSpeed = 1;
           break;
         case 3:
-          realSpeed = 2;
+          rotationSpeed = 2;
           break;
         case 5:
-          realSpeed = 3;
+          rotationSpeed = 3;
           break;
         default:
-          realSpeed = 0;
+          rotationSpeed = 0;
           break;
       }
-
-      rotationSpeed = realSpeed * speedSteps.three;
     } else {
-      rotationSpeed = status.WdSpd * speedSteps.five;
+      rotationSpeed = parseInt(status.WdSpd.toString());
     }
 
     if (status.Tur) {
-      rotationSpeed = 100;
+      rotationSpeed = this.platform.config.threeSpeedUnit
+        ? speedLevels.three
+        : speedLevels.five;
     }
 
     return rotationSpeed;
@@ -226,13 +242,7 @@ export class PlatformAC {
   }
 
   private async handleRotationSpeedSet(value: CharacteristicValue) {
-    const speedPercentage = parseFloat(value.toString());
-    const speedLevel = Math.round(
-      speedPercentage /
-        (this.platform.config.threeSpeedUnit
-          ? speedSteps.three
-          : speedSteps.five)
-    );
+    const speedLevel = parseInt(value.toString());
     let realSpeedLevel = speedLevel;
     let isTurbo = 0;
 
@@ -245,6 +255,7 @@ export class PlatformAC {
           realSpeedLevel = 3;
           break;
         case 3:
+        case 4:
           realSpeedLevel = 5;
           break;
         default:
@@ -253,7 +264,12 @@ export class PlatformAC {
       }
     }
 
-    if (speedPercentage >= 90) {
+    if (
+      speedLevel >=
+      (this.platform.config.threeSpeedUnit
+        ? speedLevels.three
+        : speedLevels.five)
+    ) {
       isTurbo = 1;
     }
 

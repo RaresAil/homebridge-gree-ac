@@ -24,6 +24,34 @@
         "required": true,
         "default": true,
         "description": "Set to true if the unit has 3 speeds and false if it has 5"
+      },
+      "coolingMinTemp": {
+        "title": "The min temperature for cooling",
+        "type": "integer",
+        "required": true,
+        "default": 16,
+        "description": "Set the minimum temperature for cooling"
+      },
+      "coolingMaxTemp": {
+        "title": "The max temperature for cooling",
+        "type": "integer",
+        "required": true,
+        "default": 30,
+        "description": "Set the maximum temperature for cooling"
+      },
+      "heatingMinTemp": {
+        "title": "The min temperature for heating",
+        "type": "integer",
+        "required": true,
+        "default": 16,
+        "description": "Set the minimum temperature for heating"
+      },
+      "heatingMaxTemp": {
+        "title": "The max temperature for heating",
+        "type": "integer",
+        "required": true,
+        "default": 30,
+        "description": "Set the maximum temperature for heating"
       }
     }
   }
