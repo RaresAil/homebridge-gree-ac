@@ -17,6 +17,13 @@
         "required": true,
         "default": "192.168.50.255",
         "description": "The broadcast address to search for the AC"
+      },
+      "threeSpeedUnit": {
+        "title": "3-Speed Unit",
+        "type": "boolean",
+        "required": true,
+        "default": true,
+        "description": "Set to true if the unit has 3 speeds and false if it has 5"
       }
     }
   }

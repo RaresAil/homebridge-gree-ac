@@ -1,4 +1,5 @@
 import { Status } from 'gree-ac-api/lib/@types';
+import { Device } from 'gree-ac-api';
 import AsyncLock from 'async-lock';
 
 const lock = new AsyncLock();
@@ -23,21 +24,39 @@ const defaults = {
   SvSt: 0
 };
 
-const cache: {
+interface Cache {
   values: Status;
   setAt: number;
-} = {
-  values: defaults,
-  setAt: 0
+}
+
+const cache: {
+  [key: string]: Cache;
+} = {};
+
+export type GetStatusFunc = () => Promise<Status>;
+
+const getStatus = (device: Device) => async (): Promise<Status> => {
+  return lock.acquire(
+    `get-status-${device.FullInfo.id}`,
+    async (): Promise<Status> => {
+      if (!cache[device.FullInfo.id.toString()]) {
+        cache[device.FullInfo.id.toString()] = {
+          values: defaults,
+          setAt: 0
+        };
+      }
+
+      if (Date.now() - cache[device.FullInfo.id.toString()].setAt < 1000) {
+        return cache[device.FullInfo.id.toString()].values;
+      }
+
+      const status = (await device.sendCommand('STATUS')) as Status;
+      cache[device.FullInfo.id.toString()].values = status;
+
+      cache[device.FullInfo.id.toString()].setAt = Date.now();
+      return cache[device.FullInfo.id.toString()].values;
+    }
+  );
 };
 
-export default function getStatus() {
-  return lock.acquire('get-status', async () => {
-    if (Date.now() - cache.setAt < 6000) {
-      return cache.values;
-    }
-
-    cache.setAt = Date.now();
-    return cache.values;
-  });
-}
+export default getStatus;
