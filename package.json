@@ -1,5 +1,5 @@
 {
-  "private": true,
+  "private": false,
   "displayName": "Gree AC Implementation Plugin",
   "name": "homebridge-gree-ac",
   "version": "1.0.0",
