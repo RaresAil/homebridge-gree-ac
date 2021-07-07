@@ -1,6 +1,7 @@
 {
   "pluginAlias": "GreeACImplementationPlugin",
   "pluginType": "platform",
+  "headerDisplay": "This plugin is tested only with NodeJS 16!",
   "singular": true,
   "schema": {
     "type": "object",
