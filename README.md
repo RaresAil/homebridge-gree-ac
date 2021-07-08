@@ -44,6 +44,37 @@ This plugin automatically detects Gree AC's and add them as accessories with the
 }
 ```
 
+### DHT Service
+
+In order to can get the humidity and temperature, you need a separate service to get that info (ONLY FOR RPi)
+
+```js
+const sensor = require('node-dht-sensor');
+const express = require('express');
+
+const app = express();
+
+app.get('/', (_, res) => {
+  sensor.read(11, 17, function (err, temperature, humidity) {
+    if (!err) {
+      res.status(200).json({
+        temperature,
+        humidity
+      });
+    } else {
+      res.status(500).json({
+        error: err.message,
+        code: err.code ?? 500
+      });
+    }
+  });
+});
+
+app.listen(55555, 'localhost', () => {
+  console.log('Service Started');
+});
+```
+
 ## Credits
 
 Based on `tomikaa87` research on https://github.com/tomikaa87/gree-remote

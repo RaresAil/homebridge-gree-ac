@@ -1,11 +1,12 @@
 import { Logger, PlatformAccessory } from 'homebridge';
 import { Device } from 'gree-ac-api';
 
+import HumiditySensor from './services/HumiditySensor';
 import HeaterCooler from './services/HeaterCooler';
 import ACContext from './@types/ACContext';
-import { Platform } from './platform';
 import ACLight from './services/ACLight';
 import ACSpeed from './services/ACSpeed';
+import { Platform } from './platform';
 
 export class PlatformAC {
   public get UUID() {
@@ -35,5 +36,9 @@ export class PlatformAC {
     new HeaterCooler(this.platform, this.accessory);
     new ACSpeed(this.platform, this.accessory);
     new ACLight(this.platform, this.accessory);
+
+    if (this.platform.config.dhtService) {
+      new HumiditySensor(this.platform, this.accessory);
+    }
   }
 }

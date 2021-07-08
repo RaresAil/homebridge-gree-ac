@@ -1,12 +1,14 @@
 import { CharacteristicValue, PlatformAccessory, Service } from 'homebridge';
 
 import getStatus, { GetStatusFunc } from '../utils/acStatus';
+import readData, { ReadDataFunc } from '../utils/dhtSensor';
 import sendData, { SendDataFunc } from '../utils/acSender';
 import { Platform } from '../platform';
 
 export default class HeaterCooler {
   private readonly service: Service;
 
+  private readonly readDHTData: ReadDataFunc;
   private readonly getStatus: GetStatusFunc;
   private readonly sendData: SendDataFunc;
 
@@ -25,6 +27,10 @@ export default class HeaterCooler {
 
     this.getStatus = getStatus(this.accessory.context.device);
     this.sendData = sendData(this.accessory.context.device);
+    this.readDHTData = readData(
+      this.accessory.context.device,
+      this.platform.config as any
+    );
 
     this.service
       .getCharacteristic(this.platform.Characteristic.Active)
@@ -115,7 +121,12 @@ export default class HeaterCooler {
   }
 
   private async handleCurrentTemperatureGet() {
-    return 30;
+    let temp = 45;
+    if (this.platform.config.dhtService) {
+      temp = (await this.readDHTData())?.temperature ?? temp;
+    }
+
+    return temp;
   }
 
   private async handleThresholdTemperatureGet() {
