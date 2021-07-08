@@ -6,10 +6,6 @@ import { Platform } from '../platform';
 
 export default class HeaterCooler {
   private readonly service: Service;
-  private readonly speedLevels = {
-    three: 4,
-    five: 6
-  };
 
   private readonly getStatus: GetStatusFunc;
   private readonly sendData: SendDataFunc;
@@ -76,18 +72,6 @@ export default class HeaterCooler {
       })
       .onGet(this.handleThresholdTemperatureGet.bind(this))
       .onSet(this.handleThresholdTemperatureSet.bind(this));
-
-    this.service
-      .getCharacteristic(this.platform.Characteristic.RotationSpeed)
-      .onGet(this.handleRotationSpeedGet.bind(this))
-      .setProps({
-        minStep: 1,
-        minValue: 0,
-        maxValue: this.platform.config.threeSpeedUnit
-          ? this.speedLevels.three
-          : this.speedLevels.five
-      })
-      .onSet(this.handleRotationSpeedSet.bind(this));
   }
 
   // Getters
@@ -144,38 +128,6 @@ export default class HeaterCooler {
     return status.TemUn;
   }
 
-  private async handleRotationSpeedGet() {
-    const status = await this.getStatus();
-    let rotationSpeed = 0;
-
-    if (this.platform.config.threeSpeedUnit) {
-      switch (parseInt(status.WdSpd.toString())) {
-        case 1:
-          rotationSpeed = 1;
-          break;
-        case 3:
-          rotationSpeed = 2;
-          break;
-        case 5:
-          rotationSpeed = 3;
-          break;
-        default:
-          rotationSpeed = 0;
-          break;
-      }
-    } else {
-      rotationSpeed = parseInt(status.WdSpd.toString());
-    }
-
-    if (status.Tur) {
-      rotationSpeed = this.platform.config.threeSpeedUnit
-        ? this.speedLevels.three
-        : this.speedLevels.five;
-    }
-
-    return rotationSpeed;
-  }
-
   // Setters
 
   private async handleActiveSet(value: CharacteristicValue) {
@@ -208,44 +160,6 @@ export default class HeaterCooler {
   private async handleThresholdTemperatureSet(value: CharacteristicValue) {
     await this.sendData({
       SetTem: parseInt(value.toString())
-    });
-  }
-
-  private async handleRotationSpeedSet(value: CharacteristicValue) {
-    const speedLevel = parseInt(value.toString());
-    let realSpeedLevel = speedLevel;
-    let isTurbo = 0;
-
-    if (this.platform.config.threeSpeedUnit) {
-      switch (speedLevel) {
-        case 1:
-          realSpeedLevel = 1;
-          break;
-        case 2:
-          realSpeedLevel = 3;
-          break;
-        case 3:
-        case 4:
-          realSpeedLevel = 5;
-          break;
-        default:
-          realSpeedLevel = 0;
-          break;
-      }
-    }
-
-    if (
-      speedLevel >=
-      (this.platform.config.threeSpeedUnit
-        ? this.speedLevels.three
-        : this.speedLevels.five)
-    ) {
-      isTurbo = 1;
-    }
-
-    await this.sendData({
-      WdSpd: realSpeedLevel,
-      Tur: isTurbo
     });
   }
 

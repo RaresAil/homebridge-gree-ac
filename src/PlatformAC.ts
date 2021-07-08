@@ -4,10 +4,10 @@ import { Device } from 'gree-ac-api';
 import HeaterCooler from './services/HeaterCooler';
 import ACContext from './@types/ACContext';
 import { Platform } from './platform';
+import ACLight from './services/ACLight';
+import ACSpeed from './services/ACSpeed';
 
 export class PlatformAC {
-  private readonly heaterCoolerService: HeaterCooler;
-
   public get UUID() {
     return this.accessory.UUID.toString();
   }
@@ -32,6 +32,8 @@ export class PlatformAC {
         accessory.context.data.mac
       );
 
-    this.heaterCoolerService = new HeaterCooler(this.platform, this.accessory);
+    new HeaterCooler(this.platform, this.accessory);
+    new ACSpeed(this.platform, this.accessory);
+    new ACLight(this.platform, this.accessory);
   }
 }
