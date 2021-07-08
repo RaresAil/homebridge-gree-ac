@@ -53,6 +53,12 @@
         "required": true,
         "default": 30,
         "description": "Set the maximum temperature for heating"
+      },
+      "dhtService": {
+        "title": "DHT Service",
+        "type": "string",
+        "required": false,
+        "description": "A rest service which has info about a DHT sensor, check the README.md for example."
       }
     }
   }

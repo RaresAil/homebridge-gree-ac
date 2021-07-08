@@ -11,7 +11,7 @@
   },
   "ignorePatterns": ["dist"],
   "rules": {
-    "indent": ["warn", 2, { "SwitchCase": 1 }],
+    "indent": "off",
     "semi": ["off"],
     "dot-notation": "off",
     "eqeqeq": "warn",

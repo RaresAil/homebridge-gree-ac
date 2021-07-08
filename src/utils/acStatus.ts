@@ -46,7 +46,7 @@ const getStatus = (device: Device) => async (): Promise<Status> => {
         };
       }
 
-      if (Date.now() - cache[device.FullInfo.id.toString()].setAt < 1000) {
+      if (Date.now() - cache[device.FullInfo.id.toString()].setAt < 150) {
         return cache[device.FullInfo.id.toString()].values;
       }
 
