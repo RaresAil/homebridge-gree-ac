@@ -9,6 +9,10 @@ This plugin automatically detects Gree AC's and add them as accessories with the
 - If you disconnect an AC and reconnect it to wifi, it will automatically bind to it
   no manual action is required
 - Fan speeds for 3 Speed units and 5 Speed units
+- Turn off/on the light
+- In version 1.1.1 i improved the response time and speed.
+- In version 1.1.1 when a status changes, now it updates all the services.
+- In version 1.1.1 was removed the RE2 to improve the install speed.
 
 ## More features will come in future!
 
@@ -38,7 +42,8 @@ This plugin automatically detects Gree AC's and add them as accessories with the
       "coolingMinTemp": 16,
       "coolingMaxTemp": 30,
       "heatingMinTemp": 16,
-      "heatingMaxTemp": 30
+      "heatingMaxTemp": 30,
+      "dhtService": "http://localhost:55555"
     }
   ]
 }

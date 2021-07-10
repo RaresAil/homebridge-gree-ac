@@ -1,4 +1,10 @@
-import { CharacteristicValue, PlatformAccessory, Service } from 'homebridge';
+import { EventEmitter } from 'stream';
+import {
+  CharacteristicValue,
+  PlatformAccessory,
+  Characteristic,
+  Service
+} from 'homebridge';
 
 import getStatus, { GetStatusFunc } from '../utils/acStatus';
 import readData, { ReadDataFunc } from '../utils/dhtSensor';
@@ -8,14 +14,20 @@ import { Platform } from '../platform';
 export default class HeaterCooler {
   private readonly service: Service;
 
+  public readonly activeChar: Characteristic;
+
+  public readonly eventEmitter: EventEmitter;
   private readonly readDHTData: ReadDataFunc;
   private readonly getStatus: GetStatusFunc;
   private readonly sendData: SendDataFunc;
+
+  public readonly EVENT = 'action';
 
   constructor(
     private readonly platform: Platform,
     private readonly accessory: PlatformAccessory
   ) {
+    this.eventEmitter = new EventEmitter();
     this.service =
       this.accessory.getService(this.platform.Service.HeaterCooler) ||
       this.accessory.addService(this.platform.Service.HeaterCooler);
@@ -32,7 +44,7 @@ export default class HeaterCooler {
       this.platform.config as any
     );
 
-    this.service
+    this.activeChar = this.service
       .getCharacteristic(this.platform.Characteristic.Active)
       .onGet(this.handleActiveGet.bind(this))
       .onSet(this.handleActiveSet.bind(this));
@@ -145,6 +157,8 @@ export default class HeaterCooler {
     await this.sendData({
       Pow: parseInt(value.toString())
     });
+
+    this.eventEmitter.emit(this.EVENT, 'Pow', parseInt(value.toString()));
   }
 
   private async handleTargetHeaterCoolerStateSet(value: CharacteristicValue) {
@@ -166,12 +180,16 @@ export default class HeaterCooler {
     await this.sendData({
       Mod: readValue
     });
+
+    this.eventEmitter.emit(this.EVENT, 'Mod', parseInt(value.toString()));
   }
 
   private async handleThresholdTemperatureSet(value: CharacteristicValue) {
     await this.sendData({
       SetTem: parseInt(value.toString())
     });
+
+    this.eventEmitter.emit(this.EVENT, 'SetTem', parseInt(value.toString()));
   }
 
   private handleTemperatureDisplayUnitsSet() {

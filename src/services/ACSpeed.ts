@@ -1,8 +1,14 @@
-import { CharacteristicValue, PlatformAccessory, Service } from 'homebridge';
+import {
+  Characteristic,
+  CharacteristicValue,
+  PlatformAccessory,
+  Service
+} from 'homebridge';
 
 import getStatus, { GetStatusFunc } from '../utils/acStatus';
 import sendData, { SendDataFunc } from '../utils/acSender';
 import { Platform } from '../platform';
+import { EventEmitter } from 'stream';
 
 export default class ACSpeed {
   private readonly service: Service;
@@ -11,13 +17,20 @@ export default class ACSpeed {
     five: 6
   };
 
+  private readonly fanActiveChar: Characteristic;
+  private readonly fanSpeedChar: Characteristic;
   private readonly getStatus: GetStatusFunc;
   private readonly sendData: SendDataFunc;
 
   constructor(
     private readonly platform: Platform,
-    private readonly accessory: PlatformAccessory
+    private readonly accessory: PlatformAccessory,
+    private readonly activeChar: Characteristic,
+    eventEmitter: EventEmitter,
+    event: string
   ) {
+    eventEmitter.on(event, this.onACAction.bind(this));
+
     this.service =
       this.accessory.getService(this.platform.Service.Fan) ||
       this.accessory.addService(this.platform.Service.Fan);
@@ -25,12 +38,12 @@ export default class ACSpeed {
     this.getStatus = getStatus(this.accessory.context.device);
     this.sendData = sendData(this.accessory.context.device);
 
-    this.service
+    this.fanActiveChar = this.service
       .getCharacteristic(this.platform.Characteristic.On)
       .onGet(this.handleOnGet.bind(this))
       .onSet(this.handleOnSet.bind(this));
 
-    this.service
+    this.fanSpeedChar = this.service
       .getCharacteristic(this.platform.Characteristic.RotationSpeed)
       .onGet(this.handleRotationSpeedGet.bind(this))
       .setProps({
@@ -43,6 +56,20 @@ export default class ACSpeed {
       .onSet(this.handleRotationSpeedSet.bind(this));
   }
 
+  private onACAction() {
+    const updatePower = async () => {
+      const power = await this.handleOnGet();
+      this.fanActiveChar.updateValue(power);
+    };
+    const updateSpeed = async () => {
+      const speed = await this.handleRotationSpeedGet();
+      this.fanSpeedChar.updateValue(speed);
+    };
+
+    updatePower();
+    updateSpeed();
+  }
+
   private async handleOnGet() {
     const status = await this.getStatus();
     return status.Pow === 1;
@@ -52,6 +79,7 @@ export default class ACSpeed {
     await this.sendData({
       Pow: value ? 1 : 0
     });
+    this.activeChar.updateValue(value);
   }
 
   private async handleRotationSpeedGet() {
@@ -122,5 +150,7 @@ export default class ACSpeed {
       WdSpd: realSpeedLevel,
       Tur: isTurbo
     });
+
+    this.activeChar.updateValue(1);
   }
 }

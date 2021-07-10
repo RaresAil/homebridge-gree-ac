@@ -2,7 +2,7 @@
   "private": false,
   "displayName": "Gree AC Implementation Plugin",
   "name": "homebridge-gree-ac-platform",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Implements the Gree AC API",
   "license": "Apache-2.0",
   "repository": {
@@ -27,19 +27,19 @@
     "homebridge-plugin"
   ],
   "dependencies": {
-    "gree-ac-api": "^1.1.0",
+    "gree-ac-api": "^1.1.2",
     "node-fetch": "^2.6.1"
   },
   "devDependencies": {
-    "@types/node": "^14.14.31",
+    "@types/node": "^16.3.1",
     "@types/node-fetch": "^2.5.11",
     "@typescript-eslint/eslint-plugin": "^4.16.1",
     "@typescript-eslint/parser": "^4.16.1",
     "eslint": "^7.21.0",
     "homebridge": "^1.3.1",
-    "nodemon": "^2.0.7",
+    "nodemon": "^2.0.11",
     "rimraf": "^3.0.2",
-    "ts-node": "^9.1.1",
+    "ts-node": "^10.1.0",
     "typescript": "^4.2.2"
   }
 }

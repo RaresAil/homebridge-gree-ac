@@ -33,11 +33,20 @@ export class PlatformAC {
         accessory.context.data.mac
       );
 
-    new HeaterCooler(this.platform, this.accessory);
-    new ACSpeed(this.platform, this.accessory);
+    const HC = new HeaterCooler(this.platform, this.accessory);
+    new ACSpeed(
+      this.platform,
+      this.accessory,
+      HC.activeChar,
+      HC.eventEmitter,
+      HC.EVENT
+    );
     new ACLight(this.platform, this.accessory);
 
-    if (this.platform.config.dhtService) {
+    if (
+      this.platform.config.dhtService &&
+      this.platform.config.dhtService !== ''
+    ) {
       new HumiditySensor(this.platform, this.accessory);
     }
   }
