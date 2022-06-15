@@ -133,7 +133,7 @@ export default class HeaterCooler {
   }
 
   private async handleCurrentTemperatureGet() {
-    let temp = 45;
+    let temp = this.platform.config.defaultCurrentTemp ?? 45;
     if (this.platform.config.dhtService) {
       temp = (await this.readDHTData())?.temperature ?? temp;
     }
