@@ -54,6 +54,13 @@
         "default": 30,
         "description": "Set the maximum temperature for heating"
       },
+      "defaultCurrentTemp": {
+        "title": "The default temperature",
+        "type": "integer",
+        "required": false,
+        "default": 45,
+        "description": "If there is no DHT service this will be used"
+      },
       "dhtService": {
         "title": "DHT Service",
         "type": "string",

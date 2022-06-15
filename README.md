@@ -43,6 +43,7 @@ This plugin automatically detects Gree AC's and add them as accessories with the
       "coolingMaxTemp": 30,
       "heatingMinTemp": 16,
       "heatingMaxTemp": 30,
+      "defaultCurrentTemp": 45,
       "dhtService": "http://localhost:55555"
     }
   ]
