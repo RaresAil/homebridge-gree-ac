@@ -2,7 +2,7 @@
   "private": false,
   "displayName": "Gree AC Implementation Plugin",
   "name": "homebridge-gree-ac-platform",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "Implements the Gree AC API",
   "license": "Apache-2.0",
   "repository": {
@@ -28,7 +28,7 @@
   ],
   "dependencies": {
     "gree-ac-api": "^1.1.2",
-    "node-fetch": "^3.2.6"
+    "node-fetch": "cjs"
   },
   "resolutions": {
     "minimist": "^1.2.6",

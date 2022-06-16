@@ -32,10 +32,7 @@ const exec = async (
     }
 
     const url = new URL(config.dhtService);
-    const data = (await (await fetch(url.toString())).json()) as Record<
-      string,
-      number
-    >;
+    const data = await (await fetch(url)).json();
 
     if (Number.isNaN(data?.temperature ?? '')) {
       return undefined;
